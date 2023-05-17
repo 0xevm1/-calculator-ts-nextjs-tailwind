@@ -60,7 +60,7 @@ export default function HomePage() {
     }
   }
 
-  function solve(operand: string, latestValue: string) {
+  function solve(operand: string | undefined, latestValue: string | undefined) {
     let result = '0';
 
     //switch for operators
