@@ -1,10 +1,6 @@
-import * as React from 'react';
+import { useState } from 'react';
 
 import Layout from '@/components/layout/Layout';
-import ArrowLink from '@/components/links/ArrowLink';
-import ButtonLink from '@/components/links/ButtonLink';
-import UnderlineLink from '@/components/links/UnderlineLink';
-import UnstyledLink from '@/components/links/UnstyledLink';
 import Seo from '@/components/Seo';
 
 /**
@@ -14,58 +10,226 @@ import Seo from '@/components/Seo';
  * You can override the next-env if the type is important to you
  * @see https://stackoverflow.com/questions/68103844/how-to-override-next-js-svg-module-declaration
  */
-import Vercel from '~/svg/Vercel.svg';
 
 // !STARTERCONF -> Select !STARTERCONF and CMD + SHIFT + F
 // Before you begin editing, follow all comments with `STARTERCONF`,
 // to customize the default configuration.
 
 export default function HomePage() {
+  const [input, setInput] = useState('0');
+
+  let stack: string[] = [];
+
+  function clear() {
+    //clear stack too
+    stack = [];
+
+    setInput('0');
+  }
+
+  function display(value: string) {
+    let display: string = input + value;
+
+    if (input.substring(0) === '0') display = value;
+
+    switch (stack.length) {
+      case 2:
+        display = value;
+        break;
+    }
+
+    setInput(display);
+  }
+
+  function addToStack(operand: string) {
+    switch (stack.length) {
+      case 0:
+        stack.push(input);
+        stack.push(operand);
+        break;
+      case 2:
+        stack.pop();
+
+        stack.push(operand);
+
+        stack.push(input);
+        break;
+      case 3:
+        solve(operand, input);
+        break;
+    }
+  }
+
+  function solve(operand: string, latestValue: string) {
+    let result = '0';
+
+    //switch for operators
+    switch (operand) {
+      case '*':
+        result = String(Number(stack.pop()) * Number(latestValue));
+        break;
+      case '/':
+        result = String(Number(stack.pop()) / Number(latestValue));
+        break;
+      case '+':
+        result = String(Number(stack.pop()) + Number(latestValue));
+        break;
+      case '-':
+        result = String(Number(stack.pop()) - Number(latestValue));
+        break;
+    }
+    stack = [];
+    setInput(result);
+  }
+
+  function equal() {
+    const displayValue: string | undefined = stack.pop(); //should match input
+    const operand: string | undefined = stack.pop();
+
+    solve(operand, displayValue);
+  }
+
   return (
     <Layout>
       {/* <Seo templateTitle='Home' /> */}
       <Seo />
 
       <main>
-        <section className='bg-white'>
-          <div className='layout relative flex min-h-screen flex-col items-center justify-center py-12 text-center'>
-            <Vercel className='text-5xl' />
-            <h1 className='mt-4'>
-              Next.js + Tailwind CSS + TypeScript Starter
-            </h1>
-            <p className='mt-2 text-sm text-gray-800'>
-              A starter for Next.js, Tailwind CSS, and TypeScript with Absolute
-              Import, Seo, Link component, pre-configured with Husky{' '}
-            </p>
-            <p className='mt-2 text-sm text-gray-700'>
-              <ArrowLink href='https://github.com/theodorusclarence/ts-nextjs-tailwind-starter'>
-                See the repository
-              </ArrowLink>
-            </p>
+        <section>
+          <h1 style={{ textAlign: 'center' }}>Calculator</h1>
 
-            <ButtonLink className='mt-6' href='/components' variant='light'>
-              See all components
-            </ButtonLink>
+          <div className='container'>
+            <br />
+            <input
+              type='text'
+              id='result'
+              className='screen'
+              style={{ textAlign: 'right', width: '100%' }}
+              value={input}
+              onChange={() => ''}
+            />
 
-            <UnstyledLink
-              href='https://vercel.com/new/git/external?repository-url=https%3A%2F%2Fgithub.com%2Ftheodorusclarence%2Fts-nextjs-tailwind-starter'
-              className='mt-4'
+            <button
+              className='button'
+              style={{ width: '100%' }}
+              onClick={() => clear()}
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                width='92'
-                height='32'
-                src='https://vercel.com/button'
-                alt='Deploy with Vercel'
-              />
-            </UnstyledLink>
+              Clear
+            </button>
 
-            <footer className='absolute bottom-2 text-gray-700'>
-              © {new Date().getFullYear()} By{' '}
-              <UnderlineLink href='https://theodorusclarence.com?ref=tsnextstarter'>
-                Theodorus Clarence
-              </UnderlineLink>
-            </footer>
+            <div className='keys'>
+              <input
+                type='button'
+                value='7'
+                className='button'
+                onClick={() => display('7')}
+              ></input>
+
+              <input
+                type='button'
+                value='8'
+                className='button'
+                onClick={() => display('8')}
+              ></input>
+
+              <input
+                type='button'
+                value='9'
+                className='button'
+                onClick={() => display('9')}
+              ></input>
+
+              <input
+                type='button'
+                value='/'
+                className='operator'
+                onClick={() => addToStack('/')}
+              ></input>
+
+              <input
+                type='button'
+                value='4'
+                className='button'
+                onClick={() => display('4')}
+              ></input>
+
+              <input
+                type='button'
+                value='5'
+                className='button'
+                onClick={() => display('5')}
+              ></input>
+
+              <input
+                type='button'
+                value='6'
+                className='button'
+                onClick={() => display('6')}
+              ></input>
+
+              <input
+                type='button'
+                value='X'
+                className='operator'
+                onClick={() => addToStack('*')}
+              ></input>
+
+              <input
+                type='button'
+                value='1'
+                className='button'
+                onClick={() => display('1')}
+              ></input>
+
+              <input
+                type='button'
+                value='2'
+                className='button'
+                onClick={() => display('2')}
+              ></input>
+
+              <input
+                type='button'
+                value='3'
+                className='button'
+                onClick={() => display('3')}
+              ></input>
+
+              <input
+                type='button'
+                value='-'
+                className='operator'
+                onClick={() => addToStack('-')}
+              ></input>
+
+              <input
+                type='button'
+                value='0'
+                className='button'
+                onClick={() => display('0')}
+              ></input>
+
+              <input
+                type='button'
+                value='.'
+                className='button'
+                onClick={() => display('.')}
+              ></input>
+
+              <input
+                type='button'
+                value='='
+                className='button equal-sign'
+                onClick={() => equal()}
+              ></input>
+
+              <input
+                type='button'
+                value='+'
+                className='operator'
+                onClick={() => addToStack('+')}
+              ></input>
+            </div>
           </div>
         </section>
       </main>
